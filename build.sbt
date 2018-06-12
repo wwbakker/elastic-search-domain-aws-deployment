@@ -1,4 +1,4 @@
-name := "elastic-search-domain-deployment"
+name := "elastic-search-domain-aws-deployment"
 organization := "nl.wwbakker"
 
 version := "0.1"

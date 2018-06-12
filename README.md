@@ -1,0 +1,1 @@
+This will be a script for deploying elastic search to AWS.
