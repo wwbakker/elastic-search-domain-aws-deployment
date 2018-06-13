@@ -13,7 +13,7 @@ val awsSdkVersion = settingKey[String]("The version of the AWS SDK used in this 
 resolvers ++= Seq(Resolver.jcenterRepo)
 
 libraryDependencies ++= Seq (
-  "com.monsanto.arch" %% "cloud-formation-template-generator" % "3.8.0"
+  "com.monsanto.arch" %% "cloud-formation-template-generator" % "3.9.1"
 ).map(_.force())
 libraryDependencies += "com.amazonaws" % "aws-java-sdk-cloudformation" % awsSdkVersion.value
 libraryDependencies += "com.typesafe" % "config" % "1.3.2"

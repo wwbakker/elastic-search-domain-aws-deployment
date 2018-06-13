@@ -1,5 +1,5 @@
 package nl.wwbakker
 
-class ElasticSearchDomainDeployer {
+class ElasticSearchDomainDeployer(val configuration: DeploymentConfiguration) {
 
 }
