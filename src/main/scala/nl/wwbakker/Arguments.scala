@@ -18,9 +18,9 @@ object ActionArgument {
   type ErrorMessage = String
 
   object Deploy extends ActionArgument
-  object Undeploy extends ActionArgument
+  object UnDeploy extends ActionArgument
 
-  private def all = Set(Deploy, Undeploy)
+  private def all = Set(Deploy, UnDeploy)
   def parse(actionName : String) : ActionArgument Or ErrorMessage =
     all.find(_.name == actionName.toLowerCase).map(Good(_))
       .getOrElse(Bad(s"'$actionName' is not a valid value. Possible values: ${all.mkString(", ")} "))

@@ -2,9 +2,11 @@ package nl.wwbakker
 
 import com.typesafe.config.{Config, ConfigFactory}
 
-class DeploymentConfiguration(config: Config) {
-  val stackIdentifier : String = config.getString("cloudformation.stackName")
+class DeploymentConfiguration(overridesConfig: Config = ConfigFactory.empty()) {
+  val config : Config = overridesConfig.withFallback(ConfigFactory.load())
+
+  val stackName : String = config.getString("cloudformation.stack-name")
 }
 object DeploymentConfiguration {
-  def default = new DeploymentConfiguration(ConfigFactory.load())
+  lazy val default = new DeploymentConfiguration
 }
