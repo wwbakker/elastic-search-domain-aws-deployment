@@ -26,7 +26,11 @@ object CloudformationRequestBuilder {
     private def parameter(parameter : MonsantoParameter, value : Any) =
       new AwsParameter().withParameterKey(parameter.name).withParameterValue(value.toString).withUsePreviousValue(false)
 
-    def apply(configuration : DeploymentConfiguration) : Seq[AwsParameter] = Seq(
+    def monsantoParameters : Seq[MonsantoParameter] =
+      Seq(InstanceCount, InstanceType, InstanceVolumeSize, DedicatedMasterEnabled, DedicatedMasterCount, DedicatedMasterType,
+        ZoneAwarenessEnabled, ElasticsearchVersion)
+
+    def awsParameters(configuration : DeploymentConfiguration) : Seq[AwsParameter] = Seq(
       parameter(InstanceCount, configuration.instanceCount),
       parameter(InstanceType, configuration.instanceType),
       parameter(InstanceVolumeSize, configuration.instanceVolumeSize),
@@ -39,7 +43,6 @@ object CloudformationRequestBuilder {
 
   }
   import Parameters._
-
 
   private def elasticSearchResourceName = "ElasticSearchDomain"
 
@@ -110,24 +113,24 @@ object CloudformationRequestBuilder {
     ),
   )
 
-  private def template(configuration: DeploymentConfiguration): Template = Template(
+  def cloudFormationTemplate(configuration: DeploymentConfiguration): String = Template(
     Description = Some(configuration.stackDescription),
-    Parameters = Some(Seq(InstanceType, InstanceCount)),
+    Parameters = Some(monsantoParameters),
     Resources = Seq(
       elasticSearchDomain(configuration)
     ),
     Outputs = Some(outputs)
-  )
+  ).toJson.prettyPrint
 
   def createStackRequest(configuration : DeploymentConfiguration) : CreateStackRequest =
     new CreateStackRequest()
       .withStackName(configuration.stackName)
-      .withTemplateBody(template(configuration).toJson.prettyPrint)
-      .withParameters(Parameters(configuration).asJavaCollection)
+      .withTemplateBody(cloudFormationTemplate(configuration))
+      .withParameters(awsParameters(configuration).asJavaCollection)
 
   def updateStackRequest(configuration : DeploymentConfiguration) : UpdateStackRequest =
     new UpdateStackRequest()
       .withStackName(configuration.stackName)
-      .withTemplateBody(template(configuration).toJson.prettyPrint)
-      .withParameters(Parameters(configuration).asJavaCollection)
+      .withTemplateBody(cloudFormationTemplate(configuration))
+      .withParameters(awsParameters(configuration).asJavaCollection)
 }
