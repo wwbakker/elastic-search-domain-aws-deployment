@@ -85,9 +85,9 @@ object CloudformationRequestBuilder {
     )),
     ElasticsearchClusterConfig = Some(
       ElasticsearchClusterConfig(
-        DedicatedMasterCount = Some(ParameterRef(DedicatedMasterCount)),
         DedicatedMasterEnabled = Some(ParameterRef(DedicatedMasterEnabled)),
-        DedicatedMasterType = Some(ParameterRef(DedicatedMasterType)),
+        DedicatedMasterCount = if (configuration.dedicatedMasterEnabled) Some(ParameterRef(DedicatedMasterCount)) else None,
+        DedicatedMasterType = if (configuration.dedicatedMasterEnabled) Some(ParameterRef(DedicatedMasterType)) else None,
         InstanceCount = Some(ParameterRef(InstanceCount)),
         InstanceType = Some(ParameterRef(InstanceType)),
         ZoneAwarenessEnabled = Some(ParameterRef(ZoneAwarenessEnabled))
@@ -116,9 +116,7 @@ object CloudformationRequestBuilder {
   def cloudFormationTemplate(configuration: DeploymentConfiguration): String = Template(
     Description = Some(configuration.stackDescription),
     Parameters = Some(monsantoParameters),
-    Resources = Seq(
-      elasticSearchDomain(configuration)
-    ),
+    Resources = Seq(elasticSearchDomain(configuration)),
     Outputs = Some(outputs)
   ).toJson.prettyPrint
 

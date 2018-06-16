@@ -3,10 +3,11 @@ package nl.wwbakker.deployment.elasticsearch.operations
 import java.time.LocalDateTime
 
 import com.amazonaws.services.cloudformation.AmazonCloudFormationClientBuilder
-import com.amazonaws.services.cloudformation.model.{CreateStackRequest, DeleteStackRequest, DescribeStacksRequest}
+import com.amazonaws.services.cloudformation.model.{CreateStackRequest, DeleteStackRequest, DescribeStackEventsRequest, DescribeStacksRequest}
 import com.amazonaws.waiters.{Waiter, WaiterParameters}
 import nl.wwbakker.deployment.elasticsearch.configuration.DeploymentConfiguration
 
+import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
 
 object StackManager {
@@ -42,20 +43,26 @@ object StackManager {
     logInformationalMessage("Stack does not yet exist. Creating a new stack.")
     val request : CreateStackRequest = CloudformationRequestBuilder.createStackRequest(configuration)
     Try(cloudFormationClient.createStack(request)) match {
-      case Success(sr) => logInformationalMessage(s"Stack (id: ${sr.getStackId}) is being created.")
+      case Success(sr) =>
+        await(cloudFormationClient.waiters().stackCreateComplete())
+        logInformationalMessage(s"Stack (id: ${sr.getStackId}) is being created.")
       case Failure(e) => logInformationalMessage(s"Stack creation failed: ${e.getMessage}")
     }
-    await(cloudFormationClient.waiters().stackCreateComplete())
+
+    logStackInformation
   }
 
   private def updateStack(implicit configuration: DeploymentConfiguration) : Unit = {
     logInformationalMessage("Stack exists, updating stack.")
     val request = CloudformationRequestBuilder.updateStackRequest(configuration)
     Try(cloudFormationClient.updateStack(request)) match {
-      case Success(sr) => logInformationalMessage(s"Stack (id: ${sr.getStackId}) is being updated.")
+      case Success(sr) =>
+        logInformationalMessage(s"Stack (id: ${sr.getStackId}) is being updated.")
+        await(cloudFormationClient.waiters().stackUpdateComplete())
       case Failure(e) => logInformationalMessage(s"Stack update failed: ${e.getMessage}")
     }
-    await(cloudFormationClient.waiters().stackUpdateComplete())
+
+    logStackInformation
   }
 
   private def await(waiter : Waiter[DescribeStacksRequest])(implicit configuration: DeploymentConfiguration) : Unit =
@@ -64,10 +71,31 @@ object StackManager {
       case Failure(e) => logErrorMessage(e.getMessage)
     }
 
+  private def logStackInformation(implicit configuration: DeploymentConfiguration) : Unit = {
+    logInformationalMessage("Retrieving stack information:")
+    Try(cloudFormationClient.describeStacks(describeStackRequest)).map(_.getStacks.asScala.headOption) match {
+      case Success(Some(stack)) =>
+        logInformationalMessage(stack.toString)
+        logInformationalMessage("Retrieving stack event information:")
+        Try(cloudFormationClient.describeStackEvents(new DescribeStackEventsRequest().withStackName(configuration.stackName))).map(_.getStackEvents.asScala) match {
+          case Success(stackEvents) =>
+            stackEvents.map(_.toString).foreach(logInformationalMessage)
+          case Failure(e) =>
+            logErrorMessage("Could not retrieve stack events: " + e.getMessage)
+        }
+      case Success(None) => logErrorMessage("No stack information available.")
+      case Failure(e) => logErrorMessage("Could not print stack information: " + e.getMessage)
+    }
+  }
+
   def undeploy(implicit configuration: DeploymentConfiguration): Unit = {
     logInformationalMessage("Deleting stack.")
-    cloudFormationClient.deleteStack(new DeleteStackRequest().withStackName(configuration.stackName))
-    await(cloudFormationClient.waiters().stackDeleteComplete())
+    Try(cloudFormationClient.deleteStack(new DeleteStackRequest().withStackName(configuration.stackName))) match {
+      case Success(_) =>
+        await(cloudFormationClient.waiters().stackDeleteComplete())
+      case Failure(e) =>
+        logErrorMessage("Could not delete stack." + e.getMessage)
+    }
   }
 
 }
