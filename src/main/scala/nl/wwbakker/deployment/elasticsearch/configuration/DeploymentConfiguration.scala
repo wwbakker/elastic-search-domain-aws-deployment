@@ -1,6 +1,7 @@
-package nl.wwbakker
+package nl.wwbakker.deployment.elasticsearch.configuration
 
 import com.typesafe.config.{Config, ConfigFactory}
+
 import scala.collection.JavaConverters._
 
 class DeploymentConfiguration(overridesConfig: Config = ConfigFactory.empty()) {
@@ -8,6 +9,7 @@ class DeploymentConfiguration(overridesConfig: Config = ConfigFactory.empty()) {
 
   private val cloudformation = config.getConfig("cloudformation")
   val stackName : String = cloudformation.getString("stack-name")
+  val stackDescription : String = cloudformation.getString("stack-description")
 
   private val domain = cloudformation.getConfig("elastic-search-domain")
   val elasticSearchDomainName : String = domain.getString("name")

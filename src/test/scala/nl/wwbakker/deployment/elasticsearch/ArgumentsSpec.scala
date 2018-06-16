@@ -1,7 +1,9 @@
+package nl.wwbakker.deployment.elasticsearch
+
 import java.nio.file.Paths
 
-import nl.wwbakker.ActionArgument.{Deploy, UnDeploy}
-import nl.wwbakker.{Arguments, DeploymentConfiguration}
+import ActionArgument.{Deploy, UnDeploy}
+import configuration.DeploymentConfiguration
 import org.scalatest.{FlatSpec, _}
 
 class ArgumentsSpec extends FlatSpec with Matchers {

@@ -1,13 +1,14 @@
-package nl.wwbakker
+package nl.wwbakker.deployment.elasticsearch
 
 import java.io.File
 
-import org.scalactic._
 import cats.data.Writer
 import cats.instances.vector._
-import cats.syntax.writer._
 import cats.syntax.applicative._
+import cats.syntax.writer._
 import com.typesafe.config.ConfigFactory
+import nl.wwbakker.deployment.elasticsearch.configuration.DeploymentConfiguration
+import org.scalactic._
 
 
 trait ActionArgument {
