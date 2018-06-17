@@ -5,7 +5,12 @@ Deploy an elastic search domain / cluster to Amazon Web Services automatically b
 # Requirements
 - AWS credentials and config set up [documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html).
 - Your AWS account must have the appropriate permissions
-- You must enable a service-linked role to give Amazon ES permissions to access your VPC. [documentation](https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/slr-es.html)
+- You must enable a service-linked role to give Amazon ES permissions to access your VPC.
+-- [official documentation](https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/slr-es.html)
+-- You can also add the role after having aws cli tools installed by running the following command
+```
+aws iam create-service-linked-role --aws-service-name es.amazonaws.com
+```
 - SBT
 
 # Actions
@@ -16,5 +21,14 @@ vpc.subnetIds = ["subnet-f33e8f93", "subnet-8d00def1"]
 - Run sbt
 - Start the application
 ```sbt
-sbt:elastic-search-domain-aws-deployment> run deploy c:\your\conf\file.conf
+sbt:elastic-search-domain-aws-deployment> run deploy c:\temp\test.conf
+[info] Running nl.wwbakker.deployment.elasticsearch.Application deploy c:\temp\test.conf
+2018-06-17T09:10:01.728 - Stack does not yet exist. Creating a new stack.
+2018-06-17T09:10:40.458 - Stack (id: arn:aws:cloudformation:eu-west-1:539407351942:stack/example-elastic-search-stack/75a3be10-71fd-11e8-93e5-503ac9eaaa99) is being created.
+2018-06-17T09:25:40.458 - Done...
+2018-06-17T09:25:40.461 - Retrieving stack information:
+2018-06-17T09:25:40.538 - {StackId: arn:aws:cloudformation:eu-west-1:539407351942:stack/example-elastic-search-stack/75a3be10-71fd-11e8-93e5-503ac9eaaa99,StackName: example-elastic-search-stack,Description: An elastic search cluster.,Parameters: [{ParameterKey: InstanceCount,ParameterValue: 1,}, {ParameterKey: ElasticsearchVersion,ParameterValue: 6.2,}, {ParameterKey: DedicatedMasterEnabled,ParameterValue: false,}, {ParameterKey: DedicatedMasterCount,ParameterValue: 3,}, {ParameterKey: InstanceType,ParameterValue: t2.small.elasticsearch,}, {ParameterKey: VolumeSize,ParameterValue: 10,}, {ParameterKey: ZoneAwarenessEnabled,ParameterValue: false,}, {ParameterKey: DedicatedMasterType,ParameterValue: t2.small.elasticsearch,}],CreationTime: Sun Jun 17 09:10:04 CEST 2018,RollbackConfiguration: {RollbackTriggers: [],},StackStatus: CREATE_COMPLETE,DisableRollback: false,NotificationARNs: [],Capabilities: [],Outputs: [{OutputKey: DomainEndpoint,OutputValue: vpc-elasticsearchdomain-d3pp5ps4vedri7t7poohnoqciq.eu-west-1.es.amazonaws.com,}, {OutputKey: DomainArn,OutputValue: arn:aws:es:eu-west-1:539407351942:domain/elasticsearchdomain,}],Tags: [],EnableTerminationProtection: false,}
+2018-06-17T09:25:40.556 - Retrieving stack event information:
+2018-06-17T09:25:40.653 - {StackId: arn:aws:cloudformation:eu-west-1:539407351942:stack/example-elastic-search-stack/75a3be10-71fd-11e8-93e5-503ac9eaaa99,EventId: 963adf80-71ff-11e8-b7c2-500c4267f861,StackName: example-elastic-search-stack,LogicalResourceId: example-elastic-search-stack,PhysicalResourceId: arn:aws:cloudformation:eu-west-1:539407351942:stack/example-elastic-search-stack/75a3be10-71fd-11e8-93e5-503ac9eaaa99,ResourceType: AWS::CloudFormation::Stack,Timestamp: Sun Jun 17 09:25:18 CEST 2018,ResourceStatus: CREATE_COMPLETE,}
+[...]
 ```

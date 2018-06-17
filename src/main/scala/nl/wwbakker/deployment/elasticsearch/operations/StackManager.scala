@@ -44,8 +44,8 @@ object StackManager {
     val request : CreateStackRequest = CloudformationRequestBuilder.createStackRequest(configuration)
     Try(cloudFormationClient.createStack(request)) match {
       case Success(sr) =>
-        await(cloudFormationClient.waiters().stackCreateComplete())
         logInformationalMessage(s"Stack (id: ${sr.getStackId}) is being created.")
+        await(cloudFormationClient.waiters().stackCreateComplete())
       case Failure(e) => logInformationalMessage(s"Stack creation failed: ${e.getMessage}")
     }
 
