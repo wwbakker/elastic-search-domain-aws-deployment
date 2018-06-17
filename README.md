@@ -32,3 +32,16 @@ sbt:elastic-search-domain-aws-deployment> run deploy c:\temp\test.conf
 2018-06-17T09:25:40.653 - {StackId: arn:aws:cloudformation:eu-west-1:539407351942:stack/example-elastic-search-stack/75a3be10-71fd-11e8-93e5-503ac9eaaa99,EventId: 963adf80-71ff-11e8-b7c2-500c4267f861,StackName: example-elastic-search-stack,LogicalResourceId: example-elastic-search-stack,PhysicalResourceId: arn:aws:cloudformation:eu-west-1:539407351942:stack/example-elastic-search-stack/75a3be10-71fd-11e8-93e5-503ac9eaaa99,ResourceType: AWS::CloudFormation::Stack,Timestamp: Sun Jun 17 09:25:18 CEST 2018,ResourceStatus: CREATE_COMPLETE,}
 [...]
 ```
+
+# Undeploying
+- Start the application
+```sbt
+sbt:elastic-search-domain-aws-deployment> run undeploy c:\temp\test.conf
+[info] Packaging E:\Dev\Repos\elastic-search-domain-aws-deployment\target\scala-2.12\elastic-search-domain-aws-deployment_2.12-0.1.jar ...
+[info] Done packaging.
+[info] Running nl.wwbakker.deployment.elasticsearch.Application undeploy c:\temp\test.conf
+2018-06-17T09:26:54.690 - Deleting stack.
+2018-06-17T09:33:28.426 - Done...
+[success] Total time: 401 s, completed 17-jun-2018 9:33:29
+```
+
