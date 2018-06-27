@@ -12,13 +12,22 @@ Deploy an elastic search domain / cluster to Amazon Web Services automatically b
 aws iam create-service-linked-role --aws-service-name es.amazonaws.com
 ```
 - SBT
+- GIT
 
 # Actions
+- Check out the project
+```bash
+git clone https://github.com/wwbakker/elastic-search-domain-aws-deployment
+```
 - Create a configuration file where you configure the subnets where the elastic search domain should be hosted. For example:
 ```conf
 vpc.subnetIds = ["subnet-f33e8f93", "subnet-8d00def1"]
 ```
-- Run sbt
+- Run sbt inside the cloned repository
+```bash
+cd elastic-search-domain-aws-deployment
+sbt
+```
 - Start the application
 ```sbt
 sbt:elastic-search-domain-aws-deployment> run deploy c:\temp\test.conf
@@ -37,11 +46,10 @@ sbt:elastic-search-domain-aws-deployment> run deploy c:\temp\test.conf
 - Start the application
 ```sbt
 sbt:elastic-search-domain-aws-deployment> run undeploy c:\temp\test.conf
-[info] Packaging E:\Dev\Repos\elastic-search-domain-aws-deployment\target\scala-2.12\elastic-search-domain-aws-deployment_2.12-0.1.jar ...
+[info] Packaging E:\Dev\Repos\elastic-search-domain-aws-deployment\target\scala-2.12\elastic-search-domain-aws-deployment_2.12-1.0.jar ...
 [info] Done packaging.
 [info] Running nl.wwbakker.deployment.elasticsearch.Application undeploy c:\temp\test.conf
 2018-06-17T09:26:54.690 - Deleting stack.
 2018-06-17T09:33:28.426 - Done...
 [success] Total time: 401 s, completed 17-jun-2018 9:33:29
 ```
-
